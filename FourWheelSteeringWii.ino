@@ -16,7 +16,7 @@
 
 #define PIN_STEERING_SELECT       16  // #######################
 
-//#define SERIAL_DEBUG             1  // 0: active mode, 1: serial debug mode
+#define SERIAL_DEBUG               0  // 0: active mode, 1: serial debug mode
 
 enum eAngle
 {
@@ -90,18 +90,16 @@ Servo SteeringServoRear;
 Servo ESC;
 Servo ESCServoOne;
 Servo ESCServoTwo;
-Servo PANServo;
-Servo TILTServo;
 
 void setup()
 {
-//#if SERIAL_DEBUG
+#if SERIAL_DEBUG
   Serial.begin(115200);
 
   Serial.print("\r\nfreeMemory() reports: ");
   Serial.println(freeMemory(), DEC);
   Serial.println("Serial connect...");
-//#endif
+#endif
 
   SteeringServoFront.attach(PIN_STEERING_SIGNAL_FRONT);
   SteeringServoFront.writeMicroseconds(SERVO_PULSE_NEUTRAL);
@@ -134,10 +132,10 @@ void setup()
   wiiremote.setBDAddressMode(BD_ADDR_FIXED);
   */
 
-//#if SERIAL_DEBUG
+#if SERIAL_DEBUG
   Serial.println("Wiimote connecting...");
   Serial.println("Please press 1 button and 2 button simultaneously");
-//#endif
+#endif
 }
 
 void loop()
@@ -164,9 +162,9 @@ bool back_light             = false;                  // back light
 
 void myapp(void)
 {
-//#if SERIAL_DEBUG
+#if SERIAL_DEBUG
   Serial.print("\r\n");
-//#endif
+#endif
 
   /* Steering */
   steering_angle = getSteeringAngle();
@@ -221,10 +219,12 @@ void myapp(void)
     }
   }
 
+#if SERIAL_DEBUG
   Serial.print("\tServo(F)=");
   Serial.print(pulse_steering_front);
   Serial.print("\tServo(R)=");
   Serial.print(pulse_steering_rear);
+#endif
 
   /* Brake and Throttle */
   if (wiiremote.buttonPressed(WIIREMOTE_ONE)) {
@@ -267,12 +267,14 @@ void myapp(void)
   pulse_esc_servo_two = map(esc_servo_angle, SERVO_ANGLE_MIN, SERVO_ANGLE_MAX, SERVO_PULSE_MAX, SERVO_PULSE_MIN);
   ESCServoTwo.writeMicroseconds(pulse_esc_servo_two);
   //delay(15);
+#if SERIAL_DEBUG
   Serial.print("\tESC=");
   Serial.print(pulse_esc);
   Serial.print(", ");
   Serial.print(pulse_esc_servo_one);
   Serial.print(", ");
   Serial.print(pulse_esc_servo_two);
+#endif
 
   /* Throttle mode */
   if (wiiremote.buttonClicked(WIIREMOTE_HOME)) {
@@ -296,9 +298,9 @@ void myapp(void)
 
   /* Fire */
   if (wiiremote.buttonPressed(WIIREMOTE_A)) {
-      digitalWrite(PIN_FIRE_SIGNAL, HIGH);
+    digitalWrite(PIN_FIRE_SIGNAL, HIGH);
   } else {
-      digitalWrite(PIN_FIRE_SIGNAL, LOW);
+    digitalWrite(PIN_FIRE_SIGNAL, LOW);
   }
 
   /* Head light LED */
